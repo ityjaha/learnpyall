@@ -1,8 +1,12 @@
 import sys
 import pygame
+from pygame.sprite import Group
+
+
 
 from settings import Settings
 from ship import Ship
+import game_functions as gf
 
 def run_game():
 	# 初始化游戏并创建一个屏幕对象
@@ -15,19 +19,31 @@ def run_game():
 	#bg_color=(230,230,230)
 	
 	# 创建一艘飞船
-	ship=Ship(screen)
+	ship=Ship(ai_settings,screen)
+	
+	bullets=Group()
+	
 	
 	# 开始游戏的主循环
 	while True:
 		# 监视键盘和鼠标事件
-		for event in pygame.event.get():
-			if event.type==pygame.QUIT:
-				sys.exit()
+		#for event in pygame.event.get():
+		#	if event.type==pygame.QUIT:
+		#		sys.exit()
 		
+		gf.check_events(ai_settings,screen,ship,bullets)
 		# 每次循环时都重新绘制屏幕
-		screen.fill(ai_settings.bg_color)
-		ship.blitme()
+		#screen.fill(ai_settings.bg_color)
+		#ship.blitme()
 		# 让最近绘制的屏幕可见
-		pygame.display.flip()
+		#pygame.display.flip()
+		ship.update()
+		bullets.update()
+		#删除已消失的子弹
+		for bullet in bullets.copy():
+			if bullet.rect.bottom<=0:
+				bullets.remove(bullet)
+
+		gf.update_screen(ai_settings,screen,ship,bullets)
 
 run_game()
